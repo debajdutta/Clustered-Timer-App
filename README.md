@@ -1,11 +1,11 @@
 # Clustered-Timer-App (Clustered Timer Application)
 
 ## Overview
-The Clustered Timer Application leverages a distributed lock to ensure that, in a clustered environment, only one instance of the timer acquires the lock and executes the job. The timer's state is stored in a database, with current support for MySQL and MongoDB.
+The Clustered Timer Application leverages a distributed lock to ensure that, in a clustered environment, only one instance of the timer acquires the lock and executes the job. The timer's state is stored in a database, with current support for MySQL, MongoDB & Redis.
 
 ## Features
 - Distributed locking mechanism
-- Support for MySQL and MongoDB
+- Support for MySQL, MongoDB & Redis
 - Configurable job execution intervals
 - Logging of application events
 
@@ -13,7 +13,7 @@ The Clustered Timer Application leverages a distributed lock to ensure that, in 
 
 ### Prerequisites
 - .NET SDK
-- MongoDB or MySQL server
+- MongoDB or MySQL server or Redis
 
 ### Installation
 1. Clone the repository:

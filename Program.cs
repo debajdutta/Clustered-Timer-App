@@ -3,28 +3,34 @@ using MongoDB.Driver;
 
 internal class Program
 {
-    public static IDistributedLock GetDistributedLock(string databaseType, string connectionString)
+    public static class DistributedLockFactory
     {
-        return databaseType switch
+        public static IDistributedLock Create(string databaseType, string connectionString)
         {
-            "MySQL" => new MySqlDistributedLock(connectionString),
-            "MongoDB" => new MongoDbDistributedLock(new MongoClient(connectionString).GetDatabase("TimerDB")),
-            _ => throw new NotSupportedException("Unsupported database type.")
-        };
+            return databaseType switch
+            {
+                "MySQL" => new MySqlDistributedLock(connectionString),
+                "MongoDB" => new MongoDbDistributedLock(new MongoClient(connectionString).GetDatabase("TimerDB")),
+                "Redis" => new RedisDistributedLock(connectionString),
+                _ => throw new NotSupportedException("Unsupported database type.")
+            };
+        }
     }
 
     public static void Main(string[] args)
     {
         ConsoleExtensions.Log($"Application started.");
 
-        // Supported Databases: MYSQL | MongoDB
-        var databaseType = "MongoDB"; 
+        // Supported Databases: MYSQL | MongoDB | Redis
+        var databaseType = "Redis";
         // Sample connection string for MySQL "Server=127.0.0.1;Database=TimerDB;User=root;Password=P@ssword1234;SslMode=Required;";
         // Sample connection string from MongoDB "mongodb://localhost:27017"
-        var connectionString = "mongodb://localhost:27017";
+        // Sample connection string for Redis "localhost:6379,abortConnect=False"
+        var connectionString = "localhost:6379,abortConnect=False";
 
         // Select the distributed lock implementation
-        var distributedLock = GetDistributedLock(databaseType, connectionString);
+        var distributedLock = DistributedLockFactory.Create(databaseType, connectionString);
+        ConsoleExtensions.Log($"Distributed lock created for {databaseType}.");
 
         // Define the job
         var job = new SampleJob();
