@@ -1,19 +1,32 @@
-﻿using MySqlX.XDevAPI.Common;
-using StackExchange.Redis;
+﻿using StackExchange.Redis;
 
 namespace ClusteredTimerApp
 {
+    /// <summary>
+    /// Represents a distributed lock using Redis.
+    /// </summary>
     public class RedisDistributedLock : IDistributedLock
     {
         private readonly IConnectionMultiplexer _connectionMultiplexer;
         private readonly IDatabase _database;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RedisDistributedLock"/> class.
+        /// </summary>
+        /// <param name="connectionString">The connection string for Redis.</param>
         public RedisDistributedLock(string connectionString)
         {
             _connectionMultiplexer = ConnectionMultiplexer.Connect(connectionString);
             _database = _connectionMultiplexer.GetDatabase();
         }
 
+        /// <summary>
+        /// Acquires a lock for a specified job.
+        /// </summary>
+        /// <param name="jobName">The name of the job to lock.</param>
+        /// <param name="instanceId">The unique identifier for the instance acquiring the lock.</param>
+        /// <param name="lockDuration">The duration for which the lock should be held.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating whether the lock was acquired.</returns>
         public async Task<bool> AcquireLock(string jobName, string instanceId, TimeSpan lockDuration)
         {
             var lockKey = GetLockKey(jobName);
@@ -26,6 +39,12 @@ namespace ClusteredTimerApp
             return lockAcquired;
         }
 
+        /// <summary>
+        /// Releases a lock for a specified job.
+        /// </summary>
+        /// <param name="jobName">The name of the job to unlock.</param>
+        /// <param name="instanceId">The unique identifier for the instance releasing the lock.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task ReleaseLock(string jobName, string instanceId)
         {
             var lockKey = GetLockKey(jobName);
@@ -59,8 +78,14 @@ namespace ClusteredTimerApp
             }
         }
 
+        /// <summary>
+        /// Gets the lock key for a specified job.
+        /// </summary>
+        /// <param name="jobName">The name of the job.</param>
+        /// <returns>The lock key for the job.</returns>
         private string GetLockKey(string jobName)
         {
+            // Command to check keys: redis-cli KEYS "lock:*"
             return $"lock:{jobName}";
         }
     }

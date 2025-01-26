@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClusteredTimerApp
+﻿namespace ClusteredTimerApp
 {
     /// <summary>
     /// Represents a persistent job that can be executed asynchronously.

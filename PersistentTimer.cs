@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClusteredTimerApp
+﻿namespace ClusteredTimerApp
 {
     /// <summary>
     /// Represents a persistent timer that executes a job at specified intervals,
@@ -63,7 +57,7 @@ namespace ClusteredTimerApp
 
             try
             {
-                ConsoleExtensions.Log($"Instance {_instanceId}  Attempting to acquire lock for job '{_jobName}'");
+                ConsoleExtensions.Log($"Instance {_instanceId} Attempting to acquire lock for job '{_jobName}'");
                 if (await _distributedLock.AcquireLock(_jobName, _instanceId, _lockDuration))
                 {
                     ConsoleExtensions.Log($"Instance {_instanceId} has acquired the lock.");
